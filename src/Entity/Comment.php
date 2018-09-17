@@ -7,6 +7,8 @@ use FOS\CommentBundle\Entity\Comment as BaseComment;
 /**
  * @ORM\Entity
  * @ORM\ChangeTrackingPolicy("DEFERRED_EXPLICIT")
+ *
+ * @TODO: remove me (from DB also)
  */
 class Comment extends BaseComment
 {
