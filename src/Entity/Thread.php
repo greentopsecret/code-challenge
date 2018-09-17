@@ -1,5 +1,5 @@
 <?php
-namespace MyProject\MyBundle\Entity;
+namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use FOS\CommentBundle\Entity\Thread as BaseThread;
