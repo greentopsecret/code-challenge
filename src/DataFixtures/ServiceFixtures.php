@@ -19,7 +19,7 @@ class ServiceFixtures extends Fixture
             'Kellersanierung',
         ];
 
-        foreach ($cities as list($name, $id)) {
+        foreach ($cities as $name) {
             $service = new Service();
             $service->setName($name);
             $manager->persist($service);
