@@ -15,16 +15,33 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends FOSRestController
 {
     /**
-     * @TODO: check that it accepts only GET
-     *
      * @return View
      */
     public function newAction()
     {
-        $form = $this->get('form.factory')->create(OrderType::class);
-        $view = View::create()
-            ->setData(array('form' => $form->createView()));
+        $form = $this->createForm(
+            OrderType::class,
+            null,
+            [
+                'action' => $this->generateUrl('app_api_order_post'),
+            ]
+        );
 
-        return $view;
+        return View::create()
+            ->setData(array('form' => $form->createView()));
+    }
+
+    /**
+     * @return View
+     */
+    public function postAction()
+    {
+//        $form = $this->createFormBuilder()
+//            ->setAction($this->generateUrl(''))
+//            ->create(OrderType::class)
+//            ->getForm();
+//
+//        return View::create()
+//            ->setData(array('form' => $form->createView()));
     }
 }

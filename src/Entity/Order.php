@@ -34,7 +34,7 @@ class Order
     private $description;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="integer")
      */
     private $executionDate;
 
@@ -79,12 +79,12 @@ class Order
         return $this;
     }
 
-    public function getExecutionDate(): ?\DateTimeInterface
+    public function getExecutionDate(): ?int
     {
         return $this->executionDate;
     }
 
-    public function setExecutionDate(\DateTimeInterface $executionDate): self
+    public function setExecutionDate(int $executionDate): self
     {
         $this->executionDate = $executionDate;
 
