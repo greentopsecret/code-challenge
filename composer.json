@@ -22,6 +22,7 @@
         "sensiolabs/security-checker": "^4.1",
         "symfony/dotenv": "*",
         "symfony/maker-bundle": "^1.7",
+        "symfony/phpunit-bridge": "*",
         "symfony/web-server-bundle": "*"
     },
     "config": {
