@@ -2,19 +2,29 @@
 
 namespace App\Controller;
 
+use App\Form\OrderType;
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\Controller\FOSRestController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @TODO: description
+ */
 class OrderController extends FOSRestController
 {
     /**
-     * @Route("/order/new", name="order")
+     * @TODO: check that it accepts only GET
+     *
+     * @return View
      */
     public function newAction()
     {
-        return $this->render('order/index.html.twig', [
-            'controller_name' => 'OrderController',
-        ]);
+        $form = $this->get('form.factory')->create(OrderType::class);
+        $view = View::create()
+            ->setData(array('form' => $form->createView()));
+
+        return $view;
     }
 }
