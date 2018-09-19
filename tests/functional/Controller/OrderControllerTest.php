@@ -2,6 +2,8 @@
 
 namespace Tests\Functional\Controller;
 
+use App\Entity\City;
+use App\Entity\Service;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -18,16 +20,7 @@ class OrderControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->client = self::createClient(
-//            array(
-//            'test_case' => 'Basic',
-//            'root_config' => 'config.yml',
-//            'debug' => false,
-//        ), array(
-//            'PHP_AUTH_USER' => 'user',
-//            'PHP_AUTH_PW' => 'user',
-//        )
-        );
+        $this->client = self::createClient();
 
         parent::setUp();
     }
@@ -54,6 +47,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertTrue($accessor->isReadable($data, '[form][children]'));
         $this->assertNull($accessor->getValue($data, '[form][children][_token]'));
 
+//        @TODO: rewrite that test (assertArraySubset)
         /**
          * Check "description" element
          */
@@ -110,13 +104,88 @@ class OrderControllerTest extends WebTestCase
         // @TODO: check choices
     }
 
-//    private function getClient()
-//    {
-//        return new Client([
-//            'base_url' => 'http://localhost:8000', // get from .env
-//            'defaults' => [
-//                'exceptions' => false
-//            ]
-//        ]);
-//    }
+    public function testPostSuccess()
+    {
+//        $csrfToken = $this->client->getContainer()->get('security.csrf.token_generator')->generateToken();
+        $this->client->request(
+            'POST',
+            '/api/orders/',
+            [
+                'order' => [
+                    'description' => 'asdasd',
+                    'executionDate' => 10,
+                    'service' => $this->getService()->getId(),
+                    'city' => $this->getCity()->getZip(),
+//                    '_token' => $csrfToken,
+                ],
+            ]
+        );
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(201, $response->getStatusCode()); // Response::HTTP_CREATED
+
+        $this->assertEmpty($response->getContent());
+        $this->assertRegExp('/http:\/\/localhost\/api\/orders\/\d+/', $response->headers->get('Location'));
+    }
+
+    public function testPostFail()
+    {
+        $this->client->request('POST', '/api/orders/');
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(400, $response->getStatusCode());
+
+        $json = $response->getContent();
+        $this->assertJson($json);
+        $data = json_decode($json, 1);
+        $this->assertArraySubset(
+            [
+                'error' => [
+                    'code' => 400,
+                    'message' => 'Bad Request',
+                ],
+            ],
+            $data
+        );
+    }
+
+    /**
+     * @return City
+     */
+    private function getCity()
+    {
+        $city = $this
+            ->client
+            ->getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getRepository(City::class)
+            ->findOneBy([]);
+
+        if (!$city instanceof City) {
+            throw new \Exception('Cannot get entity of "City" class. Check whether fixtures were loaded.');
+        }
+
+        return $city;
+    }
+
+    /**
+     * @return Service
+     */
+    private function getService()
+    {
+        $service = $this
+            ->client
+            ->getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getRepository(Service::class)
+            ->findOneBy([]);
+
+        if (!$service instanceof Service) {
+            throw new \Exception('Cannot get entity of "Service" class. Check whether fixtures were loaded.');
+        }
+
+        return $service;
+    }
 }

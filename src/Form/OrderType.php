@@ -27,7 +27,8 @@ class OrderType extends AbstractType
                 EntityType::class,
                 ['class' => Service::class, 'choice_label' => 'name', 'choice_value' => 'id']
             )
-            ->add('city',
+            ->add(
+                'city',
                 EntityType::class,
                 ['class' => City::class, 'choice_label' => 'name', 'choice_value' => 'zip']
             );

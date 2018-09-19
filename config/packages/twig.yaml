@@ -1,3 +1,4 @@
+# @TODO: remove me
 twig:
     default_path: '%kernel.project_dir%/templates'
     debug: '%kernel.debug%'
