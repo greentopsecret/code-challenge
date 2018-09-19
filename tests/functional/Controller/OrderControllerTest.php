@@ -203,6 +203,39 @@ class OrderControllerTest extends WebTestCase
         );
     }
 
+    public function testGetFailure()
+    {
+        /**
+         * Step 1: check that entity does not exist
+         */
+        $id = 100500;
+        // @TODO: check that entity does not exist
+
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+
+        /**
+         * Step 2: request entity via API
+         */
+        $this->client->request('GET', "/api/orders/{$id}");
+        $response = $this->client->getResponse();
+
+        /**
+         * Step 3: check API response
+         */
+        $json = $response->getContent();
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertJson($json);
+        $this->assertArraySubset(
+            [
+                'error' => [
+                    'code' => 404,
+                    'message' => 'Not Found',
+                ],
+            ],
+            json_decode($json, 1)
+        );
+    }
+
     /**
      * @return City
      */
@@ -238,26 +271,6 @@ class OrderControllerTest extends WebTestCase
 
         if (!$entity instanceof Service) {
             throw new \Exception('Cannot get entity of "Service" class. Make sure fixtures were loaded.');
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @return Order
-     */
-    private function getOrder()
-    {
-        $entity = $this
-            ->client
-            ->getContainer()
-            ->get('doctrine')
-            ->getManager()
-            ->getRepository(Order::class)
-            ->findOneBy([]);
-
-        if (!$entity instanceof Service) {
-            throw new \Exception('Cannot get entity of "Order" class.');
         }
 
         return $entity;

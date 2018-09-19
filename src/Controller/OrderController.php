@@ -76,4 +76,12 @@ class OrderController extends FOSRestController
 
         return View::create()->setData(['data' => $order]);
     }
+
+    /**
+     * @TODO: restrict last 30 days elements
+     */
+    public function getListAction()
+    {
+
+    }
 }

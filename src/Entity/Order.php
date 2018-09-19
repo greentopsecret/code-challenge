@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @TODO: use serialize policies in order to restrict access.
+ * @TODO: add createdAt and updatedAt elements
  *
  * @ORM\Entity(repositoryClass="App\Repository\OrderRepository")
  * @ORM\Table(name="orders")
