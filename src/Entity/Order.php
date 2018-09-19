@@ -5,6 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @TODO: use serialize policies in order to restrict access.
+ *
  * @ORM\Entity(repositoryClass="App\Repository\OrderRepository")
  * @ORM\Table(name="orders")
  */

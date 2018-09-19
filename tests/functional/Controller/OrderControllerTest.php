@@ -3,6 +3,7 @@
 namespace Tests\Functional\Controller;
 
 use App\Entity\City;
+use App\Entity\Order;
 use App\Entity\Service;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
@@ -125,7 +126,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertEquals(201, $response->getStatusCode()); // Response::HTTP_CREATED
 
         $this->assertEmpty($response->getContent());
-        $this->assertRegExp('/http:\/\/localhost\/api\/orders\/\d+/', $response->headers->get('Location'));
+        $this->assertRegExp('/http:\/\/[^\/]+\/api\/orders\/\d+/', $response->headers->get('Location'));
     }
 
     public function testPostFail()
@@ -149,12 +150,65 @@ class OrderControllerTest extends WebTestCase
         );
     }
 
+    public function testGetSuccess()
+    {
+        /**
+         * Step 1: create new Order entity via doctrine.
+         */
+        $city = $this->getCity();
+        $service = $this->getService();
+
+        $order = new Order();
+        $order->setCity($city);
+        $order->setService($service);
+        $order->setDescription('some-description');
+        $order->setExecutionDate(10);
+
+        $manager = $this->client->getContainer()->get('doctrine')->getManager();
+        $manager->persist($order);
+        $manager->flush();
+
+        $this->assertGreaterThan(0, $order->getId());
+
+        /**
+         * Step 2: request created entity via API
+         */
+        $this->client->request('GET', "/api/orders/{$order->getId()}");
+        $response = $this->client->getResponse();
+
+        /**
+         * Step 3: check API response
+         */
+        $json = $response->getContent();
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertJson($json);
+        $this->assertEquals(
+            [
+                'data' => [
+                    'id' => $order->getId(),
+                    'service' => [
+                        'id' => $service->getId(),
+                        'name' => $service->getName(),
+                    ],
+                    'city' => [
+                        'id' => $city->getId(),
+                        'name' => $city->getName(),
+                        'zip' => $city->getZip(),
+                    ],
+                    'description' => $order->getDescription(),
+                    'execution_date' => 10,
+                ],
+            ],
+            json_decode($json, 1)
+        );
+    }
+
     /**
      * @return City
      */
     private function getCity()
     {
-        $city = $this
+        $entity = $this
             ->client
             ->getContainer()
             ->get('doctrine')
@@ -162,11 +216,11 @@ class OrderControllerTest extends WebTestCase
             ->getRepository(City::class)
             ->findOneBy([]);
 
-        if (!$city instanceof City) {
-            throw new \Exception('Cannot get entity of "City" class. Check whether fixtures were loaded.');
+        if (!$entity instanceof City) {
+            throw new \Exception('Cannot get entity of "City" class. Make sure fixtures were loaded.');
         }
 
-        return $city;
+        return $entity;
     }
 
     /**
@@ -174,7 +228,7 @@ class OrderControllerTest extends WebTestCase
      */
     private function getService()
     {
-        $service = $this
+        $entity = $this
             ->client
             ->getContainer()
             ->get('doctrine')
@@ -182,10 +236,30 @@ class OrderControllerTest extends WebTestCase
             ->getRepository(Service::class)
             ->findOneBy([]);
 
-        if (!$service instanceof Service) {
-            throw new \Exception('Cannot get entity of "Service" class. Check whether fixtures were loaded.');
+        if (!$entity instanceof Service) {
+            throw new \Exception('Cannot get entity of "Service" class. Make sure fixtures were loaded.');
         }
 
-        return $service;
+        return $entity;
+    }
+
+    /**
+     * @return Order
+     */
+    private function getOrder()
+    {
+        $entity = $this
+            ->client
+            ->getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getRepository(Order::class)
+            ->findOneBy([]);
+
+        if (!$entity instanceof Service) {
+            throw new \Exception('Cannot get entity of "Order" class.');
+        }
+
+        return $entity;
     }
 }

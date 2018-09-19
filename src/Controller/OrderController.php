@@ -7,11 +7,10 @@ use App\Form\OrderType;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\Controller\FOSRestController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @TODO: description
@@ -69,6 +68,12 @@ class OrderController extends FOSRestController
 
     public function getAction($id)
     {
+        $manager = $this->getDoctrine()->getManager();
+        $order = $manager->find(Order::class, $id);
+        if (null === $order) {
+            throw new NotFoundHttpException("Order#$id not found");
+        }
 
+        return View::create()->setData(['data' => $order]);
     }
 }
