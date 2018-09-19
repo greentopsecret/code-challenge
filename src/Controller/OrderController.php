@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Order;
 use App\Form\OrderType;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,7 +65,7 @@ class OrderController extends FOSRestController
         return View::create()->setData(['form' => $form->createView()]);
     }
 
-    public function getAction($id)
+    public function getAction(int $id)
     {
         $manager = $this->getDoctrine()->getManager();
         $order = $manager->find(Order::class, $id);
