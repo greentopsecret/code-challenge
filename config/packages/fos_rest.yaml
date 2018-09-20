@@ -18,6 +18,6 @@ fos_rest:
     - { path: ^/api, prefer_extension: false, fallback_format: json, priorities: [ json ] }
   zone: # @TODO: check whether it is necessary or not
     - { path: ^/api/* }
-#  exception:
-#    exception_controller: false # TODO: tests that check negative response are passed, but exception is shown. try to remove such output. (remove twig)
+  exception:
+    exception_controller: false # TODO: tests that check negative response are passed, but exception is shown. try to remove such output. (remove twig)
 # @TODO: remove stack trace from exception output (if it exists on prod-env)

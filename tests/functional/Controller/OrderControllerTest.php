@@ -7,9 +7,10 @@ use App\Entity\Order;
 use App\Entity\Service;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
+ * !important: if you wander why that test throws a notice "Doctrine\Common\ClassLoader is deprecated." check https://github.com/symfony/symfony/issues/28119 .
+ *
  * @TODO: add fail-scenario tests
  */
 class OrderControllerTest extends WebTestCase
@@ -37,101 +38,166 @@ class OrderControllerTest extends WebTestCase
         $this->assertJson($json);
         $data = json_decode($json, 1);
 
-        $accessor = PropertyAccess::createPropertyAccessor();
-
-        $this->assertEquals('order', $accessor->getValue($data, '[form][vars][id]'));
-        $this->assertEquals('POST', $accessor->getValue($data, '[form][vars][method]'));
-        $this->assertEquals('/api/orders/', $accessor->getValue($data, '[form][vars][action]'));
-        $this->assertCount(0, $accessor->getValue($data, '[form][vars][errors][errors]'));
-        $this->assertFalse($accessor->getValue($data, '[form][vars][submitted]'));
-
-        $this->assertTrue($accessor->isReadable($data, '[form][children]'));
-        $this->assertNull($accessor->getValue($data, '[form][children][_token]'));
-
-//        @TODO: rewrite that test (assertArraySubset)
-        /**
-         * Check "description" element
-         */
-        $this->assertEquals(
-            'order[description]',
-            $accessor->getValue($data, '[form][children][description][vars][full_name]')
+        $this->assertArraySubset(
+            [
+                'form' => [
+                    'vars' => [
+                        'name' => 'order',
+                        'errors' => [
+                            'form' => [
+                                'children' => [
+                                    'description' => [],
+                                    'title' => [],
+                                    'executionDate' => [],
+                                    'service' => [],
+                                    'city' => [],
+                                ],
+                            ],
+                        ],
+                        'method' => 'POST',
+                        'action' => '/api/orders/',
+                    ],
+                    'children' => [
+                        'description' => [
+                            'vars' => [
+                                'value' => '',
+                                'name' => 'description',
+                            ],
+                        ],
+                        'title' => [
+                            'vars' => [
+                                'value' => '',
+                                'name' => 'title',
+                            ],
+                        ],
+                        'executionDate' => [
+                            'vars' => [
+                                'value' => '',
+                                'name' => 'executionDate',
+                                'choices' => [
+                                    0 => [
+                                        'label' => 'Zeitnah',
+                                        'value' => '10',
+                                    ],
+                                    1 => [
+                                        'label' => 'Innerhalb der nächsten 30 Tage',
+                                        'value' => '20',
+                                    ],
+                                    2 => [
+                                        'label' => 'In den nächsten 3 Monaten',
+                                        'value' => '23',
+                                    ],
+                                    3 => [
+                                        'label' => 'In 3 bis 6 Monaten',
+                                        'value' => '25',
+                                    ],
+                                    4 => [
+                                        'label' => 'In mehr als 6 Monaten',
+                                        'value' => '27',
+                                    ],
+                                    5 => [
+                                        'label' => 'Wunschtermin: Bitte Datum wählen',
+                                        'value' => '30',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'service' => [
+                            'vars' => [
+                                'value' => '',
+                                'name' => 'service',
+                                'choices' => [
+                                    108140 => [
+                                        'label' => 'Kellersanierung',
+                                        'value' => '108140',
+                                    ],
+                                    402020 => [
+                                        'label' => 'Holzdielen schleifen',
+                                        'value' => '402020',
+                                    ],
+                                    411070 => [
+                                        'label' => 'Fensterreinigung',
+                                        'value' => '411070',
+                                    ],
+                                    802030 => [
+                                        'label' => 'Abtransport, Entsorgung und Entrümpelung',
+                                        'value' => '802030',
+                                    ],
+                                    804040 => [
+                                        'label' => 'Sonstige Umzugsleistungen',
+                                        'value' => '804040',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'city' => [
+                            'vars' => [
+                                'value' => '',
+                                'name' => 'city',
+                                'choices' => [
+                                    10115 => [
+                                        'label' => 'Berlin',
+                                        'value' => '10115',
+                                    ],
+                                    21521 => [
+                                        'label' => 'Hamburg',
+                                        'value' => '21521',
+                                    ],
+                                    32457 => [
+                                        'label' => 'Porta Westfalica',
+                                        'value' => '32457',
+                                    ],
+                                    '01623' => [
+                                        'label' => 'Lommatzsch',
+                                        'value' => '01623',
+                                    ],
+                                    '06895' => [
+                                        'label' => 'Bülzig',
+                                        'value' => '06895',
+                                    ],
+                                    '01612' => [
+                                        'label' => 'Diesbar-Seußlitz',
+                                        'value' => '01612',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $data
         );
-
-        /**
-         * Check "executionDate" element
-         */
-        $this->assertEquals(
-            'order[executionDate]',
-            $accessor->getValue($data, '[form][children][executionDate][vars][full_name]')
-        );
-        $this->assertEquals(
-            'Zeitnah',
-            $accessor->getValue($data, '[form][children][executionDate][vars][choices][0][label]')
-        );
-        $this->assertEquals(
-            '10',
-            $accessor->getValue($data, '[form][children][executionDate][vars][choices][0][value]')
-        );
-        $this->assertEquals(
-            'Innerhalb der nächsten 30 Tage',
-            $accessor->getValue($data, '[form][children][executionDate][vars][choices][1][label]')
-        );
-        $this->assertEquals(
-            '20',
-            $accessor->getValue($data, '[form][children][executionDate][vars][choices][1][value]')
-        );
-        $this->assertEquals(
-            'In den nächsten 3 Monaten',
-            $accessor->getValue($data, '[form][children][executionDate][vars][choices][2][label]')
-        );
-        $this->assertEquals(
-            '23',
-            $accessor->getValue($data, '[form][children][executionDate][vars][choices][2][value]')
-        );
-        // @TODO: add the rest choices
-
-
-        $this->assertEquals(
-            'order[service]',
-            $accessor->getValue($data, '[form][children][service][vars][full_name]')
-        );
-        // @TODO: check choices
-
-
-        $this->assertEquals(
-            'order[city]',
-            $accessor->getValue($data, '[form][children][city][vars][full_name]')
-        );
-        // @TODO: check choices
     }
 
     public function testPostSuccess()
     {
-//        $csrfToken = $this->client->getContainer()->get('security.csrf.token_generator')->generateToken();
         $this->client->request(
             'POST',
             '/api/orders/',
             [
                 'order' => [
-                    'description' => 'asdasd',
+                    'title' => 'title',
+                    'description' => 'description',
                     'executionDate' => 10,
                     'service' => $this->getService()->getId(),
                     'city' => $this->getCity()->getZip(),
-//                    '_token' => $csrfToken,
                 ],
             ]
         );
         $response = $this->client->getResponse();
 
-        $this->assertEquals(201, $response->getStatusCode()); // Response::HTTP_CREATED
+        $this->assertEquals(201, $response->getStatusCode(), $response->getContent()); // Response::HTTP_CREATED
 
         $this->assertEmpty($response->getContent());
         $this->assertRegExp('/http:\/\/[^\/]+\/api\/orders\/\d+/', $response->headers->get('Location'));
     }
 
-    public function testPostFail()
+    /**
+     * No form was submitted
+     */
+    public function testPostFailNotSubmitted()
     {
-        $this->client->request('POST', '/api/orders/');
+        $this->client->request('POST', '/api/orders/', []);
         $response = $this->client->getResponse();
 
         $this->assertEquals(400, $response->getStatusCode());
@@ -141,10 +207,164 @@ class OrderControllerTest extends WebTestCase
         $data = json_decode($json, 1);
         $this->assertArraySubset(
             [
-                'error' => [
-                    'code' => 400,
-                    'message' => 'Bad Request',
+                'code' => 400,
+                'message' => 'Request does not contain form',
+            ],
+            $data
+        );
+    }
+
+    /**
+     * No form was submitted
+     */
+    public function testPostFailInvalidData()
+    {
+        $this->client->request(
+            'POST',
+            '/api/orders/',
+            [
+                'order' => [
+                    'title' => 'shrt',
+                    'description' => 'description',
                 ],
+            ]
+        );
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(400, $response->getStatusCode());
+
+        $json = $response->getContent();
+        $this->assertJson($json);
+        $data = json_decode($json, 1);
+        $this->assertArraySubset(
+            [
+                'form' => [
+                    'vars' => [
+                        'errors' => [
+                            'form' => [
+                                'children' => [
+                                    'title' => [
+                                        'errors' => [
+                                            'This value is too short. It should have 5 characters or more.',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'valid' => false,
+                        'data' =>
+                            [
+                                'title' => 'shrt',
+                                'description' => 'description',
+                            ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
+    /**
+     * Too long|short title was submitted.
+     *
+     * @dataProvider dataProviderPatchFail
+     */
+    public function testPatchFail($title, $error)
+    {
+        $order = $this->getOrder();
+        $this->client->request(
+            'POST',
+            "/api/orders/{$order->getId()}",
+            [
+                'order' => [
+                    'title' => $title,
+                ],
+            ]
+        );
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(400, $response->getStatusCode());
+
+        $json = $response->getContent();
+        $this->assertJson($json);
+        $data = json_decode($json, 1);
+        $this->assertArraySubset(
+            [
+                'form' => [
+                    'vars' => [
+                        'errors' => [
+                            'form' => [
+                                'children' => [
+                                    'title' => [
+                                        'errors' => [$error],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'valid' => false,
+                        'data' =>
+                            [
+                                'title' => $title,
+                                'description' => $order->getDescription(),
+                            ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
+    public function dataProviderPatchFail()
+    {
+        return [
+            ['shrt', 'This value is too short. It should have 5 characters or more.'],
+            [
+                'long long long long long long long long long long long',
+                'This value is too long. It should have 50 characters or less.',
+            ],
+        ];
+    }
+
+    public function testPatchSuccess()
+    {
+        $order = $this->getOrder();
+        $newTitle = 'valid title-'.rand(0, 999);
+        $this->client->request(
+            'POST',
+            "/api/orders/{$order->getId()}",
+            [
+                'order' => [
+                    'title' => $newTitle,
+                ],
+            ]
+        );
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $json = $response->getContent();
+        $this->assertJson($json);
+        $data = json_decode($json, 1);
+        $this->assertArraySubset(
+            [
+                'data' =>
+                    [
+                        'id' => 1,
+                        'title' => $newTitle, // that field should be new, the rest should remain untouched.
+                        'service' =>
+                            [
+                                'id' => $order->getService()->getId(),
+                                'name' => $order->getService()->getName()
+                            ],
+                        'city' =>
+                            [
+                                'id' => $order->getCity()->getId(),
+                                'name' => $order->getCity()->getName(),
+                                'zip' => $order->getCity()->getZip(),
+                            ],
+                        'description' => $order->getDescription(),
+                        'execution_date' => $order->getExecutionDate(),
+                    ],
             ],
             $data
         );
@@ -161,6 +381,7 @@ class OrderControllerTest extends WebTestCase
         $order = new Order();
         $order->setCity($city);
         $order->setService($service);
+        $order->setTitle('some-title');
         $order->setDescription('some-description');
         $order->setExecutionDate(10);
 
@@ -197,6 +418,7 @@ class OrderControllerTest extends WebTestCase
                     ],
                     'description' => $order->getDescription(),
                     'execution_date' => 10,
+                    'title' => 'some-title'
                 ],
             ],
             json_decode($json, 1)
@@ -205,32 +427,17 @@ class OrderControllerTest extends WebTestCase
 
     public function testGetFailure()
     {
-        /**
-         * Step 1: check that entity does not exist
-         */
         $id = 100500;
-        // @TODO: check that entity does not exist
-
-        $manager = $this->client->getContainer()->get('doctrine')->getManager();
-
-        /**
-         * Step 2: request entity via API
-         */
         $this->client->request('GET', "/api/orders/{$id}");
         $response = $this->client->getResponse();
 
-        /**
-         * Step 3: check API response
-         */
         $json = $response->getContent();
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertJson($json);
         $this->assertArraySubset(
             [
-                'error' => [
-                    'code' => 404,
-                    'message' => 'Not Found',
-                ],
+                'code' => 404,
+                'message' => 'Order#100500 not found',
             ],
             json_decode($json, 1)
         );
@@ -250,7 +457,7 @@ class OrderControllerTest extends WebTestCase
             ->findOneBy([]);
 
         if (!$entity instanceof City) {
-            throw new \Exception('Cannot get entity of "City" class. Make sure fixtures were loaded.');
+            throw new \Exception('Cannot get entity of "City" class.');
         }
 
         return $entity;
@@ -270,7 +477,27 @@ class OrderControllerTest extends WebTestCase
             ->findOneBy([]);
 
         if (!$entity instanceof Service) {
-            throw new \Exception('Cannot get entity of "Service" class. Make sure fixtures were loaded.');
+            throw new \Exception('Cannot get entity of "Service" class.');
+        }
+
+        return $entity;
+    }
+
+    /**
+     * @return Order
+     */
+    private function getOrder()
+    {
+        $entity = $this
+            ->client
+            ->getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getRepository(Order::class)
+            ->findOneBy([]);
+
+        if (!$entity instanceof Order) {
+            throw new \Exception('Cannot get entity of "Order" class.');
         }
 
         return $entity;

@@ -1,0 +1,12 @@
+monolog:
+  handlers:
+    main:
+      type: stream
+      path: "%kernel.logs_dir%/%kernel.environment%.log"
+      level: debug
+      channels: ["!event"]
+
+services:
+  # https://github.com/symfony/symfony/issues/25676#issuecomment-369619194
+  logger:
+    class: Psr\Log\NullLogger

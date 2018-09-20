@@ -17,6 +17,7 @@ class OrderType extends AbstractType
     {
         $builder
             ->add('description')
+            ->add('title')
             ->add(
                 'executionDate',
                 ChoiceType::class,

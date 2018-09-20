@@ -2,13 +2,6 @@
 #    resource: ../../src/Controller/
 #    type: annotation
 
-# TODO: remove me
-fos_comment_api:
-    type: rest
-    resource: "@FOSCommentBundle/Resources/config/routing.yml"
-    prefix: /fos_comment_api
-#    defaults: { _format: html }
-
 app_orders_api:
     type: rest
     resource: \App\Controller\OrderController
