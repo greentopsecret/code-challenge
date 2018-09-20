@@ -8,7 +8,7 @@
 
 Copy the project
 ```bash
-$ git clone git@github.com:greentopsecret/code-challenge.git
+$ git clone https://github.com/greentopsecret/code-challenge.git
 ```
 
 Go to the project directory 
@@ -29,22 +29,22 @@ $ vim .env
 
 Create DB and load seed data
 ```bash
-$ bin/console doctrine:database:create --env=prod
+$ bin/console doctrine:database:create --env=dev
 $ bin/console doctrine:database:create --env=test
-$ bin/console doctrine:schema:update --force --env=prod
+$ bin/console doctrine:schema:update --force --env=dev
 $ bin/console doctrine:schema:update --force --env=test
-$ bin/console doctrine:migrations:migrate -n --env=prod
+$ bin/console doctrine:migrations:migrate -n --env=dev
 $ bin/console doctrine:migrations:migrate -n --env=test
-```
-
-Run application using a local web server
-```bash
-php -S 127.0.0.1:8000 -t public
 ```
 
 ## Run tests
 ```bash
 $ bin/phpunit
+```
+
+Run application using a local web server
+```bash
+php -S 127.0.0.1:8000 -t public &
 ```
 
 ## Usage
@@ -114,7 +114,7 @@ X-Powered-By: PHP/7.2.9
 Cache-Control: no-cache, private
 Date: Thu, 20 Sep 2018 06:03:30 GMT
 Content-Type: application/json
-Allow: PATCH, GET, POST
+Allow: PATCH, GET
 
 {
     "data": {
@@ -184,6 +184,7 @@ Allow: PATCH, GET, POST
 
 
 ## Possible enhancements
+* [ ] **dockerize** entire application 
 * [ ] **Order::$executionDate:** 
 Possible values for Order::$executionDate property could be described as relation to new entity.
 * [ ] **Hide specific Entities' fields from exposing:** 
