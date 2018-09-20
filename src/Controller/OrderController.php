@@ -138,6 +138,7 @@ class OrderController extends FOSRestController
             OrderType::class,
             $order,
             [
+                'method' => 'PATCH',
                 'action' => $this->generateUrl('app_api_order_patch', ['id' => $order->getId()]),
             ]
         );

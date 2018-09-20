@@ -1,14 +1,14 @@
-# code-challenge
+# Code challenge
 
 ## Requirements
 * mysql 5.7
-* php 7
+* php 7.2
 
 ## Installing
 
 Copy the project
 ```bash
-$ git clone git@github.com:greentopsecret/code-challenge.git
+$ git clone https://github.com/greentopsecret/code-challenge.git
 ```
 
 Go to the project directory 
@@ -24,28 +24,27 @@ $ composer install
 Adjust DB credentials 
 ```bash
 $ vim .env
-$ vim config/packages/test/doctrine.yaml
 
 ```
 
 Create DB and load seed data
 ```bash
-$ bin/console doctrine:database:create --env=prod
+$ bin/console doctrine:database:create --env=dev
 $ bin/console doctrine:database:create --env=test
-$ bin/console doctrine:schema:update --force --env=prod
+$ bin/console doctrine:schema:update --force --env=dev
 $ bin/console doctrine:schema:update --force --env=test
-$ bin/console doctrine:migrations:migrate -n --env=prod
+$ bin/console doctrine:migrations:migrate -n --env=dev
 $ bin/console doctrine:migrations:migrate -n --env=test
-```
-
-Run application using a local web server
-```bash
-php -S 127.0.0.1:8000 -t public
 ```
 
 ## Run tests
 ```bash
 $ bin/phpunit
+```
+
+Run application using a local web server
+```bash
+php -S 127.0.0.1:8000 -t public &
 ```
 
 ## Usage
@@ -94,7 +93,7 @@ Connection: close
 X-Powered-By: PHP/7.2.9
 Cache-Control: no-cache, private
 Date: Thu, 20 Sep 2018 05:58:46 GMT
-Location: http://127.0.0.1:8000/api/orders/36
+Location: http://127.0.0.1:8000/api/orders/26   <--
 Allow: POST
 Content-Type: application/json
 ```
@@ -115,7 +114,7 @@ X-Powered-By: PHP/7.2.9
 Cache-Control: no-cache, private
 Date: Thu, 20 Sep 2018 06:03:30 GMT
 Content-Type: application/json
-Allow: PATCH, GET, POST
+Allow: PATCH, GET
 
 {
     "data": {
@@ -173,22 +172,22 @@ Allow: PATCH, GET, POST
 
 
 ## TODO:
-- [ ] Dockerize the project 
-- [ ] Use [NelmioApiDocBundle](https://github.com/nelmio/NelmioApiDocBundle) for generating api
-- [ ] Implement GET /api/orders/ method
+- [ ] Use [NelmioApiDocBundle](https://github.com/nelmio/NelmioApiDocBundle) for generating api (~3 Hours)
+- [ ] Implement GET /api/orders/ method (~1.5 Hours)
     -  [ ] add properties Order::$createdAt, Order::$updatedAt.
     -  [ ] filter elements by initial creation (not older than 30 days)
     -  [ ] filter elements by service
     -  [ ] filter elements by region
-- [ ] Implement GET /api/cities/ method <sup>*</sup>
+- [ ] Implement GET /api/cities/ method <sup>*</sup> (~0.5 Hours)
 
 <sup>*</sup> - Instead of returning list of available cities and zip codes (that can be quite long), extra query could be used.
 
 
 ## Possible enhancements
+* [ ] **dockerize** entire application 
 * [ ] **Order::$executionDate:** 
 Possible values for Order::$executionDate property could be described as relation to new entity.
 * [ ] **Hide specific Entities' fields from exposing:** 
-Exclusion policies could be used for that purpose.
+Exclusion policies could be used for that purpose. (~1-2 Hours)
 * [ ] Do something with **deprecation notice** in test. Currently cannot be fixed because of [that](https://github.com/symfony/symfony/issues/28119).
  

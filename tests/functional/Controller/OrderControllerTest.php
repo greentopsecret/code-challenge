@@ -443,6 +443,149 @@ class OrderControllerTest extends WebTestCase
         );
     }
 
+    public function testEditAction()
+    {
+        $order = $this->getOrder();
+        $this->client->request('GET', "/api/orders/{$order->getId()}/edit");
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $json = $response->getContent();
+        $this->assertJson($json);
+        $data = json_decode($json, 1);
+
+        $this->assertArraySubset(
+            [
+                'form' => [
+                    'vars' => [
+                        'name' => 'order',
+                        'errors' => [
+                            'form' => [
+                                'children' => [
+                                    'description' => [],
+                                    'title' => [],
+                                    'executionDate' => [],
+                                    'service' => [],
+                                    'city' => [],
+                                ],
+                            ],
+                        ],
+                        'method' => 'PATCH',
+                        'action' => "/api/orders/{$order->getId()}",
+                    ],
+                    'children' => [
+                        'description' => [
+                            'vars' => [
+                                'value' => $order->getDescription(),
+                                'name' => 'description',
+                            ],
+                        ],
+                        'title' => [
+                            'vars' => [
+                                'value' => $order->getTitle(),
+                                'name' => 'title',
+                            ],
+                        ],
+                        'executionDate' => [
+                            'vars' => [
+                                'value' => $order->getExecutionDate(),
+                                'name' => 'executionDate',
+                                'choices' => [
+                                    0 => [
+                                        'label' => 'Zeitnah',
+                                        'value' => '10',
+                                    ],
+                                    1 => [
+                                        'label' => 'Innerhalb der nächsten 30 Tage',
+                                        'value' => '20',
+                                    ],
+                                    2 => [
+                                        'label' => 'In den nächsten 3 Monaten',
+                                        'value' => '23',
+                                    ],
+                                    3 => [
+                                        'label' => 'In 3 bis 6 Monaten',
+                                        'value' => '25',
+                                    ],
+                                    4 => [
+                                        'label' => 'In mehr als 6 Monaten',
+                                        'value' => '27',
+                                    ],
+                                    5 => [
+                                        'label' => 'Wunschtermin: Bitte Datum wählen',
+                                        'value' => '30',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'service' => [
+                            'vars' => [
+                                'value' => $order->getService()->getId(),
+                                'name' => 'service',
+                                'choices' => [
+                                    108140 => [
+                                        'label' => 'Kellersanierung',
+                                        'value' => '108140',
+                                    ],
+                                    402020 => [
+                                        'label' => 'Holzdielen schleifen',
+                                        'value' => '402020',
+                                    ],
+                                    411070 => [
+                                        'label' => 'Fensterreinigung',
+                                        'value' => '411070',
+                                    ],
+                                    802030 => [
+                                        'label' => 'Abtransport, Entsorgung und Entrümpelung',
+                                        'value' => '802030',
+                                    ],
+                                    804040 => [
+                                        'label' => 'Sonstige Umzugsleistungen',
+                                        'value' => '804040',
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'city' => [
+                            'vars' => [
+                                'value' => $order->getCity()->getZip(),
+                                'name' => 'city',
+                                'choices' => [
+                                    10115 => [
+                                        'label' => 'Berlin',
+                                        'value' => '10115',
+                                    ],
+                                    21521 => [
+                                        'label' => 'Hamburg',
+                                        'value' => '21521',
+                                    ],
+                                    32457 => [
+                                        'label' => 'Porta Westfalica',
+                                        'value' => '32457',
+                                    ],
+                                    '01623' => [
+                                        'label' => 'Lommatzsch',
+                                        'value' => '01623',
+                                    ],
+                                    '06895' => [
+                                        'label' => 'Bülzig',
+                                        'value' => '06895',
+                                    ],
+                                    '01612' => [
+                                        'label' => 'Diesbar-Seußlitz',
+                                        'value' => '01612',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
     /**
      * @return City
      */

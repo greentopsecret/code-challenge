@@ -1,6 +1,10 @@
-#parameters:
-#  env(DATABASE_URL): 'mysql://root@127.0.0.1:3306/myhammer-code-challenge-test'
+parameters:
+  # Adds a fallback DATABASE_URL if the env var is not set.
+  # This allows you to run cache:warmup even if your
+  # environment variables are not available yet.
+  # You should not need to change this value.
+  env(DATABASE_URL): ''
 
 doctrine:
   dbal:
-    url: 'mysql://root@127.0.0.1:3306/myhammer-code-challenge-test'
+    url: '%env(resolve:DATABASE_URL_TEST)%'
