@@ -13,9 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-/**
- * @TODO: description
- */
 class OrderController extends FOSRestController
 {
     /**
@@ -162,13 +159,5 @@ class OrderController extends FOSRestController
         );
 
         return View::create()->setData(['form' => $form->createView()]);
-    }
-
-    /**
-     * @TODO: restrict last 30 days elements
-     */
-    public function getListAction()
-    {
-
     }
 }

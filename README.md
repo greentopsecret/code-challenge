@@ -8,7 +8,7 @@
 
 Copy the project
 ```bash
-$ git clone https://github.com/greentopsecret/code-challenge.git
+$ git clone git@github.com:greentopsecret/code-challenge.git
 ```
 
 Go to the project directory 
@@ -48,9 +48,23 @@ php -S 127.0.0.1:8000 -t public
 $ bin/phpunit
 ```
 
+## TODO:
+- [ ] Dockerize the project 
+- [ ] Use [NelmioApiDocBundle](https://github.com/nelmio/NelmioApiDocBundle) for generating api
+- [ ] Implement GET /api/orders/ method
+    -  [ ] add properties Order::$createdAt, Order::$updatedAt.
+    -  [ ] filter elements by initial creation (not older than 30 days)
+    -  [ ] filter elements by service
+    -  [ ] filter elements by region
+- [ ] Implement GET /api/cities/ method <sup>*</sup>
+
+<sup>*</sup> - Instead of returning list of available cities and zip codes (that can be quite long), extra query could be used.
+
+
 ## Possible enhancements
-* **Order::$executionDate:** 
+* [ ] **Order::$executionDate:** 
 Possible values for Order::$executionDate property could be described as relation to new entity.
-* **Hide specific fields from exposing:** 
+* [ ] **Hide specific Entities' fields from exposing:** 
 Exclusion policies could be used for that purpose.
-* Do something with **deprecation notice** in test. Currently cannot be fixed because of [that](https://github.com/symfony/symfony/issues/28119). 
+* [ ] Do something with **deprecation notice** in test. Currently cannot be fixed because of [that](https://github.com/symfony/symfony/issues/28119).
+ 

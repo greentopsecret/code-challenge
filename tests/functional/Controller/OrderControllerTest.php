@@ -9,9 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Client;
 
 /**
- * !important: if you wander why that test throws a notice "Doctrine\Common\ClassLoader is deprecated." check https://github.com/symfony/symfony/issues/28119 .
- *
- * @TODO: add fail-scenario tests
+ * !important: if you wonder why first test throws a notice
+ * "Doctrine\Common\ClassLoader is deprecated." check https://github.com/symfony/symfony/issues/28119 .
  */
 class OrderControllerTest extends WebTestCase
 {
