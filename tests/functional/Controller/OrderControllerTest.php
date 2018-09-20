@@ -22,6 +22,7 @@ class OrderControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->client = self::createClient();
+        $this->client->followRedirects(false);
 
         parent::setUp();
     }
@@ -272,7 +273,7 @@ class OrderControllerTest extends WebTestCase
     {
         $order = $this->getOrder();
         $this->client->request(
-            'POST',
+            'PATCH',
             "/api/orders/{$order->getId()}",
             [
                 'order' => [
@@ -329,7 +330,7 @@ class OrderControllerTest extends WebTestCase
         $order = $this->getOrder();
         $newTitle = 'valid title-'.rand(0, 999);
         $this->client->request(
-            'POST',
+            'PATCH',
             "/api/orders/{$order->getId()}",
             [
                 'order' => [

@@ -4,9 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Order;
 use App\Form\OrderType;
-use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
-use FOS\RestBundle\Controller\Annotations\Put;
 use FOS\RestBundle\Controller\FOSRestController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,7 +22,7 @@ class OrderController extends FOSRestController
             OrderType::class,
             null,
             [
-                'action' => $this->generateUrl('app_api_order_post_insert'),
+                'action' => $this->generateUrl('app_api_order_post'),
             ]
         );
 
@@ -32,26 +30,16 @@ class OrderController extends FOSRestController
     }
 
     /**
-     *
-     * In theory POST method should only insert new resources, PATCH method update existing resources.
-     * In reality I couldn't figure out how to handle method PATCH. So, I need to use POST for both - insert and update.
-     *
-     * @Rest\Post(path="/", name="_insert")
-     * @Rest\Post(path="/{id}", name="_update")
-     *
      * @return View
      */
-    public function postAction(Request $request, int $id = null)
+    public function postAction(Request $request)
     {
-        if (null !== $id) {
-            return $this->patchAction($request, $id);
-        }
-
         $form = $this->createForm(
             OrderType::class,
             null,
             [
-                'action' => $this->generateUrl('app_api_order_post_insert'),
+                'method' => 'post',
+                'action' => $this->generateUrl('app_api_order_post'),
             ]
         );
 
@@ -79,10 +67,6 @@ class OrderController extends FOSRestController
     }
 
     /**
-     * Method updates existing resource (order).
-     * Unfortunately couldn't figure out how to use PATCH method without workarounds.
-     * That's why use POST method.
-     *
      * @return View
      */
     public function patchAction(Request $request, int $id)
@@ -97,7 +81,7 @@ class OrderController extends FOSRestController
             OrderType::class,
             $order,
             [
-                'method' => 'POST', // PATCH won't work - need to use POST
+                'method' => 'PATCH',
                 'action' => $this->generateUrl('app_api_order_patch', ['id' => $id]),
             ]
         );
@@ -154,7 +138,7 @@ class OrderController extends FOSRestController
             OrderType::class,
             $order,
             [
-                'action' => $this->generateUrl('app_api_order_post_update', ['id' => $order->getId()]),
+                'action' => $this->generateUrl('app_api_order_patch', ['id' => $order->getId()]),
             ]
         );
 
